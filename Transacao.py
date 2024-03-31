@@ -1,8 +1,10 @@
 from Conta import Conta
-
-class Transacao:
+from ABC import ABC
+class Transacao(ABC):
     def __init__(self):
         pass
 
-    def registrar(self, conta = Conta):
+    def valor(self):
+        pass
+    def registrar(self, conta: Conta):
         pass
