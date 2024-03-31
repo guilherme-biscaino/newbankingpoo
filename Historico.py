@@ -1,6 +1,6 @@
 class Historico:
     def __init__(self):
-        pass
+            self._transacoes = []
 
     def adicionar_transacao(self, transacao):
-        pass
+        self._transacoes.append()
