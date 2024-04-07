@@ -8,4 +8,3 @@ class PessoaFisica(Cliente):
         self._cpf = cpf
         self._nome = nome
         self._nascimento = data_nascimento
-

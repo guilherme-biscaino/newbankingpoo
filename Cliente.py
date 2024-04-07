@@ -14,3 +14,6 @@ class Cliente:
     def adicionar_conta(self, conta: Conta):
         self._contas.append(conta)
 
+    @property
+    def contas(self):
+        return self._contas

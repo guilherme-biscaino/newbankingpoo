@@ -1,10 +1,15 @@
-from Conta import Conta
-from ABC import ABC
-class Transacao(ABC):
-    def __init__(self):
-        pass
+from abc import abstractmethod
+#from Conta import Conta
+from abc import ABC
 
+
+class Transacao(ABC):
+    @property
+    @abstractmethod
     def valor(self):
         pass
-    def registrar(self, conta: Conta):
+
+    @classmethod
+    @abstractmethod
+    def registrar(self, conta):
         pass
