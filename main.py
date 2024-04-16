@@ -84,7 +84,6 @@ def recuperar_conta_cliente(cliente):
 
 
 def saque(clientes):
-    # TODO: ainda não foram implementados os limites diarios de saque e de valores
 
     cpf = input("Digite o cpf do cliente:")
     cliente = filtrar_contas(cpf, clientes)
@@ -129,7 +128,6 @@ def Extrato(clientes):
     print(extrato)
     print(f"\n Saldo: \n\tR$ {conta.saldo:.2f}")
     print("=============================")
-    # FIXME: classes responsáveis por registrar saque e deposito ainda não funcional
 
 
 def criar_usuario(usuarios):
@@ -265,5 +263,5 @@ def init(usuarios, contas, current_user, contas_no_banco):
 main()
 
 # TODO: realizar limpeza no codigo
-# TODO: arrumar returno das funções deposito e saque para que assim o historico funcione
 # TODO: Refatorar função de login
+

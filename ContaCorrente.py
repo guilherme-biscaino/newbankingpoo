@@ -1,4 +1,5 @@
 from Conta import Conta
+from Saque import Saque
 
 
 class ContaCorrente(Conta):
@@ -8,7 +9,14 @@ class ContaCorrente(Conta):
         self.limite_saques = limite_saques
 
     def sacar(self, valor: float):
-        super().sacar(valor)
+        numero_saques = len([transacao for transacao in self.historico.transacoes if transacao["tipo"] == Saque.__name__])
+        if valor > self.limite:
+            print(f"O valor de saque ({valor})não pode ser maior que o limite ({self.limite})")
+            return False
+        elif numero_saques >= 3:
+            print("Operação falhou, número de saques ultrapassou a quantidade diaria de saques")
+        else:
+            return super().sacar(valor)
 
     def depositar(self, valor: float):
-        super().depositar(valor)
+        return super().depositar(valor)

@@ -29,26 +29,29 @@ class Conta:
     def nova_conta(cls, cliente, numero: int, ):
         return cls(cliente, numero)
 
-    def sacar(self, valor: float):
+    def sacar(self, valor: float) -> bool:
+
         saldo = self._saldo
         value_exceed_saldo = valor > saldo
         if value_exceed_saldo:
             print("O valor a sacar não pode exceder o saldo!")
+            return False
         elif valor < 0:
             print("O valor sacado não pode ser negativo!")
+            return False
         else:
             print(f"Foi sacado R${valor} da sua conta, \n obrigado por usar novos serviços.")
             self._saldo -= valor
-            return True
 
-        return False
+        return True
 
-    def depositar(self, valor: float):
+    def depositar(self, valor: float) -> bool:
         if valor < 0:
             print("O valor que deseja depositar não pode ser negativo!")
+            return False
         else:
             self._saldo += valor
-            return False
+
         return True
 
     @property

@@ -13,6 +13,5 @@ class Saque(Transacao):
     def registrar(self, conta: Conta):
         sucesso_transacao = conta.sacar(self.valor)
 
-        # FIXME: por algum motivo obscuro sucesso_transacao retorna "None" mesmo definindo o retorno na função saque
         if sucesso_transacao:
             conta.historico.adicionar_transacao(self)
