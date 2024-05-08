@@ -1,7 +1,9 @@
+import datetime
 import textwrap
 
 from Cliente import Cliente
 from ContaCorrente import ContaCorrente
+from ContaIterator import ContaIterator
 from Deposito import Deposito
 from PessoaFisica import PessoaFisica
 from Saque import Saque
@@ -22,7 +24,16 @@ def menu():
     """
     return input(menu)
 
+def log_creator(funcao):
 
+    def envelope(*args, **kwargs):
+        funcao(*args, **kwargs)
+        current_time = datetime.datetime.now()
+        formated_time = current_time.strftime('%d-%m-%Y %H:%M:%S')
+        print("=" * 100)
+        print(f"Operação de {funcao.__name__}, executada as: {formated_time}")
+
+    return envelope
 # RFE: Menu de login
 def init_menu():
     log_menu = """
@@ -55,6 +66,7 @@ def filtrar_contas(cpf, clientes):
     # se cpf do cliente esta na variavel clientes retorne verdadeiro, caso não volte falso.
 
 
+@log_creator
 # poo v2
 def deposito(clientes):
     cpf = input("digite o cpf do cliente: \n")
@@ -82,7 +94,7 @@ def recuperar_conta_cliente(cliente):
 
     return cliente.contas[0]
 
-
+@log_creator
 def saque(clientes):
 
     cpf = input("Digite o cpf do cliente:")
@@ -101,7 +113,7 @@ def saque(clientes):
 
     cliente.realizar_transacao(conta, transacao)
 
-
+@log_creator
 def Extrato(clientes):
     cpf = input("Digite o CPF do cliente: \n")
     cliente = filtrar_contas(cpf, clientes)
@@ -114,22 +126,31 @@ def Extrato(clientes):
     if not conta:
         return
 
+    extratoChoice = input(
+    '''
+    Digite "Saque" para obter o extrato dos seus saques
+    Digite "Deposito" para obter o extrato dos seus depositos
+    Caso queira obter o extrato completo deixe em branco
+    ''')
+
     print("==========EXTRATO==========")
     transacoes = conta.historico.transacoes
 
     extrato = ""
 
-    if not transacoes:
-        extrato = "Não foram realizadas transações"
-    else:
-        for transacao in transacoes:
-            extrato += f"\n{transacao['tipo']}:\n\tR${transacao['valor']:.2f}"
+    is_empty = True
 
+    for transacao in conta.historico.gerar_relatorio(extratoChoice if extratoChoice != '' else None):
+        is_empty = False
+        print(f"{transacao['tipo']}: R$:{transacao['valor']} \n")
+
+    if is_empty:
+        extrato = "Não foram feitas transações!"
     print(extrato)
-    print(f"\n Saldo: \n\tR$ {conta.saldo:.2f}")
+    print(f"Saldo: \n\tR$ {conta.saldo:.2f}")
     print("=============================")
 
-
+@log_creator
 def criar_usuario(usuarios):
     nome = input("digite seu nome: \n")
     cpf = input("digite seu cpf: \n")
@@ -145,7 +166,7 @@ def criar_usuario(usuarios):
         init_menu()
         return usuarios, cpf
 
-
+@log_creator
 # poo v2
 def criar_cliente(clientes):
     cpf = input("informe o cpf do cliente(somente numeros)")
@@ -185,7 +206,7 @@ def get_current_user_in_contas(current_user, contas):
 
 
 def listar_contas_do_usuario(contas):
-    for conta in contas:
+    for conta in ContaIterator(contas):
         print("=" * 100)
         print(textwrap.dedent(str(conta)))
 

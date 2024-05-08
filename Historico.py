@@ -4,7 +4,7 @@ from datetime import datetime
 
 class Historico:
     def __init__(self):
-            self._transacoes = []
+        self._transacoes = []
 
     @property
     def transacoes(self):
@@ -20,3 +20,11 @@ class Historico:
             }
 
         )
+
+    def gerar_relatorio(self, tipo_transacao=None):
+        for transacao in self._transacoes:
+            try:
+                if tipo_transacao.lower() == transacao['tipo'].lower():
+                    yield transacao
+            except AttributeError:
+                yield transacao

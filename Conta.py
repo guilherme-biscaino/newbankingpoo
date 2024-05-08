@@ -13,15 +13,19 @@ class Conta:
     def saldo(self):
         return self._saldo
 
-    def get_cliente(self):
+    @property
+    def cliente(self):
         return self._cliente
 
-    def get_numero(self):
+    @property
+    def numero(self):
         return self._numero
 
-    def get_agencia(self):
+    @property
+    def agencia(self):
         return self._agencia
 
+    @property
     def get_historico(self):
         return self._historico
 
