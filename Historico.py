@@ -1,5 +1,6 @@
 from Transacao import Transacao
 from datetime import datetime
+from FileManager import FileManager
 
 
 class Historico:
@@ -10,7 +11,7 @@ class Historico:
     def transacoes(self):
         return self._transacoes
 
-    def adicionar_transacao(self, transacao):
+    def adicionar_transacao(self, transacao, conta):
 
         self._transacoes.append(
             {
@@ -18,8 +19,9 @@ class Historico:
                 "valor": transacao.valor,
                 "data": datetime.now(),
             }
-
         )
+        FileManager.salvar(transacao, conta)
+
 
     def gerar_relatorio(self, tipo_transacao=None):
         for transacao in self._transacoes:

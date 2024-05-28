@@ -7,10 +7,15 @@ from ContaIterator import ContaIterator
 from Deposito import Deposito
 from PessoaFisica import PessoaFisica
 from Saque import Saque
+from FileManager import FileManager
+
+
+FileManager.checkfiles()
 
 
 # menu principal
 def menu():
+
     menu = """
     ***Menu***
         [d] Depositar
@@ -150,6 +155,7 @@ def Extrato(clientes):
     print(f"Saldo: \n\tR$ {conta.saldo:.2f}")
     print("=============================")
 
+
 @log_creator
 def criar_usuario(usuarios):
     nome = input("digite seu nome: \n")
@@ -165,6 +171,7 @@ def criar_usuario(usuarios):
         print("já existe uma conta com seu cpf \n tente fazer login com seu cpf!")
         init_menu()
         return usuarios, cpf
+
 
 @log_creator
 # poo v2

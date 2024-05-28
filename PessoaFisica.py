@@ -8,3 +8,14 @@ class PessoaFisica(Cliente):
         self._cpf = cpf
         self._nome = nome
         self._nascimento = data_nascimento
+
+    @property
+    def cpf(self):
+        return self._cpf
+
+    @property
+    def nome(self):
+        return self._nome
+
+    def nascimento(self):
+        return self._nascimento
