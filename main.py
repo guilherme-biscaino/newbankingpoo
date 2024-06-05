@@ -185,6 +185,10 @@ def criar_cliente(clientes):
     nome = input("digite o nome completo")
     data_nascimento = input("digite a data de nascimento (dia-mes-ano)")
     endereco = input("digite seu endereço(logradouro, nro - bairro - cidade/estado)")
+    senha = input("digite uma senha")
+
+
+    FileManager.save_client(nome, data_nascimento, cpf, endereco, senha)
 
     cliente = PessoaFisica(nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco)
     clientes.append(cliente)
@@ -203,7 +207,7 @@ def criar_conta(numero_da_conta, clientes, contas):
     contas.append(conta)
     cliente.contas.append(conta)
     print("Conta criada com sucesso!\n")
-
+    FileManager.create_account(cpf)
 
 def get_current_user_in_contas(current_user, contas):
     for i in enumerate(contas):

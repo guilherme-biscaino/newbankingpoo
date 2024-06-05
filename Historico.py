@@ -20,7 +20,7 @@ class Historico:
                 "data": datetime.now(),
             }
         )
-        FileManager.salvar(transacao, conta)
+        FileManager.save_transaction(transacao, conta)
 
 
     def gerar_relatorio(self, tipo_transacao=None):
