@@ -6,7 +6,6 @@ class Cliente:
     def __init__(self, endereco: str):
         self._endereco = endereco
         self._contas = []
-        pass
 
     def realizar_transacao(self, conta: Conta, trasacao: Transacao):
         trasacao.registrar(conta)

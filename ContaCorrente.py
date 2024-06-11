@@ -19,4 +19,8 @@ class ContaCorrente(Conta):
             return super().sacar(valor)
 
     def depositar(self, valor: float):
+
         return super().depositar(valor)
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}: {self.agencia}, {self.numero}, {self.cliente.nome}"

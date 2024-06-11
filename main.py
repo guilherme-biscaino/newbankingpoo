@@ -32,11 +32,14 @@ def menu():
 def log_creator(funcao):
 
     def envelope(*args, **kwargs):
-        funcao(*args, **kwargs)
+        resultado = funcao(*args, **kwargs)
         current_time = datetime.datetime.now()
         formated_time = current_time.strftime('%d-%m-%Y %H:%M:%S')
         print("=" * 100)
+        print(f"dentro do logger {datetime.datetime.now()}")
         print(f"Operação de {funcao.__name__}, executada as: {formated_time}")
+        FileManager.save_to_log(formated_time, funcao.__name__, resultado, *args, **kwargs)
+        print(f"{formated_time} : Função {funcao.__name__} executada com os parametros {args} e {kwargs} gerando: {resultado}")
 
     return envelope
 # RFE: Menu de login
@@ -88,6 +91,7 @@ def deposito(clientes):
     if not conta:
         return
     cliente.realizar_transacao(conta, transacao)
+    print(f"apos deposito {datetime.datetime.now()}")
 
 
 def recuperar_conta_cliente(cliente):
@@ -117,6 +121,7 @@ def saque(clientes):
         return
 
     cliente.realizar_transacao(conta, transacao)
+
 
 @log_creator
 def Extrato(clientes):
@@ -195,6 +200,7 @@ def criar_cliente(clientes):
     print("\n Cliente criado com sucesso!")
 
 
+@log_creator
 def criar_conta(numero_da_conta, clientes, contas):
     cpf = input("Digite o cpf do cliente: \n")
     cliente = filtrar_contas(cpf, clientes)

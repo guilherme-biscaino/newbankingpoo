@@ -19,3 +19,6 @@ class PessoaFisica(Cliente):
 
     def nascimento(self):
         return self._nascimento
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}: {self.cpf}"
