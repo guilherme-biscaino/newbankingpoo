@@ -4,6 +4,7 @@ import textwrap
 from Cliente import Cliente
 from ContaCorrente import ContaCorrente
 from ContaIterator import ContaIterator
+from DbClientsManager import DbClientsManager
 from Deposito import Deposito
 from PessoaFisica import PessoaFisica
 from Saque import Saque
@@ -11,6 +12,7 @@ from FileManager import FileManager
 
 
 FileManager.checkfiles()
+DbClientsManager.set_up_tables()
 
 
 # menu principal
@@ -67,10 +69,12 @@ def login(usuarios):
         login(usuarios)
 
 
-#  função responsavel por retornar prieiro cliente com o cpf passado
+#  função responsavel por retornar priMeiro cliente com o cpf passado
 def filtrar_contas(cpf, clientes):
     filtro = [cliente for cliente in clientes if cliente._cpf == cpf]
-    return filtro[0] if filtro else None
+    return DbClientsManager.get_cliente(cpf) if DbClientsManager.get_cliente(cpf) else None
+
+
     # se cpf do cliente esta na variavel clientes retorne verdadeiro, caso não volte falso.
 
 
@@ -184,9 +188,9 @@ def criar_cliente(clientes):
     cpf = input("informe o cpf do cliente(somente numeros)")
 
     cliente = filtrar_contas(cpf, clientes)
-
     if cliente:
         print("já existe um cliente com este cpf!")
+        return
     nome = input("digite o nome completo")
     data_nascimento = input("digite a data de nascimento (dia-mes-ano)")
     endereco = input("digite seu endereço(logradouro, nro - bairro - cidade/estado)")
@@ -194,6 +198,7 @@ def criar_cliente(clientes):
 
 
     FileManager.save_client(nome, data_nascimento, cpf, endereco, senha)
+    DbClientsManager.cadastrar_cliente(nome,0,cpf,data_nascimento,0)
 
     cliente = PessoaFisica(nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco)
     clientes.append(cliente)
@@ -209,6 +214,7 @@ def criar_conta(numero_da_conta, clientes, contas):
         print("Cliente não encontrado!, fluxo de criação encerrado")
         return
 
+    DbClientsManager.cadastrar_conta(numero_da_conta, cliente[0])
     conta = ContaCorrente.nova_conta(cliente=cliente, numero=numero_da_conta)
     contas.append(conta)
     cliente.contas.append(conta)
@@ -223,6 +229,8 @@ def get_current_user_in_contas(current_user, contas):
 
 
 def listar_contas_do_usuario(contas):
+    cpf = input("digite o cpf")
+    DbClientsManager.get_accounts_from_client_cpf(cpf)
     for conta in ContaIterator(contas):
         print("=" * 100)
         print(textwrap.dedent(str(conta)))
@@ -302,4 +310,7 @@ main()
 
 # TODO: realizar limpeza no codigo
 # TODO: Refatorar função de login
-
+# logar
+# no momento que o login foi feito com sucesso retorna todas as contas do usuario e guarda em uma array
+# provavelmente usando a função de listar contas
+# checagem dos valores de deposito/saque são feitos em cima dessa array e não consultando direto no banco de dados
