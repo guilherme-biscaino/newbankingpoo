@@ -50,23 +50,26 @@ class DbClientsManager:
         cls.con.commit()
 
     @classmethod
-    def cadastrar_conta(cls, numero_conta, id_cliente):
-        cls.cursor.execute("INSERT INTO contas (numero_conta, id_cliente, saldo) VALUES (?,?,?)",
-                           (numero_conta, id_cliente, 0.0))
+    def cadastrar_conta(cls, id_cliente):
+        cls.cursor.execute("SELECT count(*) FROM contas")
+
+        a = cls.cursor.fetchone()
+
+        cls.cursor.execute("INSERT INTO contas (numero_conta, id_cliente, saldo) VALUES (?,?,0)", (a[0]+1, id_cliente))
+
         cls.con.commit()
 
     @classmethod
     def get_cliente(cls, cpf):
-        cls.cursor.execute("SELECT nome FROM clientes WHERE id = ?", (cpf,))
-        a = cls.cursor.fetchone()
-        return a
+        cls.cursor.execute("SELECT * FROM clientes WHERE cpf = ?", (cpf,))
+        return cls.cursor.fetchone()
 
     @classmethod
     def get_accounts_from_client_cpf(cls, cpf):
         cls.cursor.execute("SELECT numero_conta, saldo FROM contas "
                            "WHERE (SELECT id FROM clientes WHERE cpf = ?) = id_cliente", (cpf,))
-        a = cls.cursor.fetchone()
-        print(a)
+        return cls.cursor.fetchall()
+
 
 
 #DbClientsManager.cadastrar_cliente("guilherme", 123, 1, 000, 1)

@@ -55,27 +55,25 @@ def init_menu():
 
 
 # RFE: deprecated, função de login.. atualizar para conformar com poo
-def login(usuarios):
+def login():
     try:
-        attemp_user = input('digite seu cpf: \n')
-        temp_dict = usuarios.__getitem__(attemp_user)
-        if (temp_dict.__getitem__("senha") == input("digite a senha: \n")):
-            return attemp_user
+        cpf = input('Digite seu cpf: \n')
+        pw = input("Digite sua senha: \n")
+        client_info = DbClientsManager.get_cliente(cpf)
+        if cpf == client_info[3] and pw == client_info[2]:
+            return client_info
         else:
             print("usuario ou senha incorretos")
-            login(usuarios)
+            login()
     except KeyError:
         print("Usuário não existe")
-        login(usuarios)
+        login()
 
 
 #  função responsavel por retornar priMeiro cliente com o cpf passado
-def filtrar_contas(cpf, clientes):
-    filtro = [cliente for cliente in clientes if cliente._cpf == cpf]
+def filtrar_contas(cpf):
     return DbClientsManager.get_cliente(cpf) if DbClientsManager.get_cliente(cpf) else None
-
-
-    # se cpf do cliente esta na variavel clientes retorne verdadeiro, caso não volte falso.
+    # se cpf do cliente esta presente no bd clientes retorna info sobre o cliente, caso não volte falso.
 
 
 @log_creator
@@ -184,10 +182,10 @@ def criar_usuario(usuarios):
 
 @log_creator
 # poo v2
-def criar_cliente(clientes):
+def criar_cliente():
     cpf = input("informe o cpf do cliente(somente numeros)")
 
-    cliente = filtrar_contas(cpf, clientes)
+    cliente = filtrar_contas(cpf)
     if cliente:
         print("já existe um cliente com este cpf!")
         return
@@ -198,7 +196,7 @@ def criar_cliente(clientes):
 
 
     FileManager.save_client(nome, data_nascimento, cpf, endereco, senha)
-    DbClientsManager.cadastrar_cliente(nome,0,cpf,data_nascimento,0)
+    DbClientsManager.cadastrar_cliente(nome,senha,cpf,data_nascimento,1)
 
     cliente = PessoaFisica(nome=nome, data_nascimento=data_nascimento, cpf=cpf, endereco=endereco)
     clientes.append(cliente)
@@ -206,18 +204,14 @@ def criar_cliente(clientes):
 
 
 @log_creator
-def criar_conta(numero_da_conta, clientes, contas):
+def criar_conta():
     cpf = input("Digite o cpf do cliente: \n")
-    cliente = filtrar_contas(cpf, clientes)
+    cliente = filtrar_contas(cpf)
 
     if not cliente:
         print("Cliente não encontrado!, fluxo de criação encerrado")
         return
-
-    DbClientsManager.cadastrar_conta(numero_da_conta, cliente[0])
-    conta = ContaCorrente.nova_conta(cliente=cliente, numero=numero_da_conta)
-    contas.append(conta)
-    cliente.contas.append(conta)
+    DbClientsManager.cadastrar_conta(cliente[0])
     print("Conta criada com sucesso!\n")
     FileManager.create_account(cpf)
 
@@ -228,12 +222,8 @@ def get_current_user_in_contas(current_user, contas):
         return account_check
 
 
-def listar_contas_do_usuario(contas):
-    cpf = input("digite o cpf")
-    DbClientsManager.get_accounts_from_client_cpf(cpf)
-    for conta in ContaIterator(contas):
-        print("=" * 100)
-        print(textwrap.dedent(str(conta)))
+def listar_contas_do_usuario(cpf):
+    print(DbClientsManager.get_accounts_from_client_cpf(cpf))
 
 
 def sair(current_user):
@@ -242,33 +232,29 @@ def sair(current_user):
     return current_user
 
 
-def main():
-    clientes = []
-    contas = []
-    numero_da_conta = 0
+def main(current_user):
 
     while True:
 
         opcao = menu()
 
         if opcao == "d":
-            deposito(clientes)
+            deposito()
 
         elif opcao == "s":
-            saque(clientes)
+            saque()
 
         elif opcao == "e":
-            Extrato(clientes)
+            Extrato()
 
-        elif opcao == "nu":
-            criar_cliente(clientes)
+        # elif opcao == "nu":
+        #     criar_cliente()
 
         elif opcao == "nc":
-            numero_da_conta = len(contas) + 1
-            criar_conta(numero_da_conta, clientes, contas)
+            criar_conta()
 
         elif opcao == "l":
-            listar_contas_do_usuario(contas)
+            listar_contas_do_usuario(current_user[3])
 
         elif opcao == "q":
             break
@@ -278,22 +264,21 @@ def main():
 
 
 # RFE: função de login, a ser apresentada antes de liberar menu principal.
-def init(usuarios, contas, current_user, contas_no_banco):
+def initiate():
     init_option = init_menu()
 
-    if (init_option == "1" and current_user != "0"):
-        current_user = login(usuarios)
-        usuarios, contas, current_user, contas_no_banco = routine(usuarios, contas, current_user, contas_no_banco)
-
+    if (init_option == "1"):
+        current_user = login()
+        main(current_user)
 
     elif (init_option == "2"):
-        usuarios, current_user = criar_usuario(usuarios)
-        current_user = login(usuarios)
-        usuarios, contas, current_user, contas_no_banco = routine(usuarios, contas, current_user, contas_no_banco)
+        criar_cliente()
+        current_user = login()
+        main(current_user)
 
     elif (init_option == "10"):
         print("delisgando sistema")
-        return usuarios, contas, current_user, contas_no_banco
+        input()
 
     elif (init_option == "12"):
         for i in enumerate(contas):
@@ -305,8 +290,7 @@ def init(usuarios, contas, current_user, contas_no_banco):
         print("desculpe, a opção que escolheu não é valida")
     init(usuarios, contas, current_user, contas_no_banco)
 
-
-main()
+initiate()
 
 # TODO: realizar limpeza no codigo
 # TODO: Refatorar função de login
