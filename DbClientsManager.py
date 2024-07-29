@@ -70,7 +70,12 @@ class DbClientsManager:
                            "WHERE (SELECT id FROM clientes WHERE cpf = ?) = id_cliente", (cpf,))
         return cls.cursor.fetchall()
 
+    @classmethod
+    def get_saldo(cls, conta):
 
+        cls.cursor.execute("SELECT saldo FROM contas WHERE numero_conta = ?", (conta,))
+
+        return cls.cursor.fetchone()
 
 #DbClientsManager.cadastrar_cliente("guilherme", 123, 1, 000, 1)
 #DbClientsManager.cadastrar_conta(1, 1)

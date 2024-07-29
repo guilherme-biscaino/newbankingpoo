@@ -7,6 +7,7 @@ class Cliente:
         self._endereco = endereco
         self._contas = []
 
+    @classmethod
     def realizar_transacao(self, conta: Conta, trasacao: Transacao):
         trasacao.registrar(conta)
 

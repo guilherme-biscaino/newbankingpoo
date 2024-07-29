@@ -1,4 +1,7 @@
+import DbTrasactionManager
 from Historico import Historico
+from DbClientsManager import DbClientsManager
+from DbTrasactionManager import DbTransactionManager
 
 
 class Conta:
@@ -7,7 +10,6 @@ class Conta:
         self._numero = numero
         self._agencia = 1
         self._saldo = 0
-        self._historico = Historico()
 
     @property
     def saldo(self):
@@ -25,17 +27,15 @@ class Conta:
     def agencia(self):
         return self._agencia
 
-    @property
-    def get_historico(self):
-        return self._historico
-
     @classmethod
     def nova_conta(cls, cliente, numero: int, ):
         return cls(cliente, numero)
 
-    def sacar(self, valor: float) -> bool:
+    @classmethod
+    def sacar(cls, valor: float, conta) -> bool:
+        print(conta)
+        saldo = DbClientsManager.get_saldo(conta)[0]
 
-        saldo = self._saldo
         value_exceed_saldo = valor > saldo
         if value_exceed_saldo:
             print("O valor a sacar não pode exceder o saldo!")
@@ -45,19 +45,22 @@ class Conta:
             return False
         else:
             print(f"Foi sacado R${valor} da sua conta, \n obrigado por usar novos serviços.")
-            self._saldo -= valor
+            DbTransactionManager.sacar(conta, valor)
 
         return True
 
-    def depositar(self, valor: float) -> bool:
+    @classmethod
+    def depositar(self, valor: float, conta) -> bool:
         if valor < 0:
             print("O valor que deseja depositar não pode ser negativo!")
             return False
         else:
-            self._saldo += valor
+            DbTransactionManager.depositar(conta,valor)
 
         return True
 
-    @property
-    def historico(self):
-        return self._historico
+    @classmethod
+    def get_historico(cls, conta):
+        print(conta)
+        input()
+        return DbTransactionManager.extrato(conta)
